@@ -2,12 +2,16 @@ import React from "react";
 import HomeIcon from "@mui/icons-material/Home";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { makeStyles } from "@mui/styles";
+import { Link, useLocation } from "react-router-dom";
 const useStyles = makeStyles({
 	sidebar: {
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "center",
 		color: "#ffffff",
+		"& a": {
+			color: "white",
+		},
 	},
 	sidebarLink: {
 		height: "80px",
@@ -23,7 +27,13 @@ const useStyles = makeStyles({
 			margin: "5px 0",
 			fontSize: "11px",
 		},
+
 		"&:hover": {
+			background: "#EA5179",
+			color: "#ffffff",
+			borderRadius: "10px",
+		},
+		"&.active": {
 			background: "#EA5179",
 			color: "#ffffff",
 			borderRadius: "10px",
@@ -32,14 +42,19 @@ const useStyles = makeStyles({
 });
 
 function Sidebar() {
+	let CURRENT_URL = useLocation().pathname;
 	const classes = useStyles();
+	const isLinkActive = (link) => {
+		return link.split("/")[1] === CURRENT_URL.split("/")[2];
+	};
+
 	const linksArray = [
 		{
 			id: 1,
 			label: "Dashboard",
 			classes: "sidebar-links",
 			icon: <HomeIcon />,
-			path: "/",
+			path: "/main",
 		},
 		{
 			id: 2,
@@ -71,7 +86,7 @@ function Sidebar() {
 		},
 		{
 			id: 6,
-			label: "Repors",
+			label: "Reports",
 			classes: "sidebar-links",
 			icon: <PeopleAltIcon />,
 			path: "/reports",
@@ -80,10 +95,15 @@ function Sidebar() {
 	return (
 		<div className={classes.sidebar}>
 			{linksArray.map((link) => (
-				<div className={classes.sidebarLink} key={link.id}>
-					{link.icon}
-					<h5>{link.label}</h5>
-				</div>
+				<Link to={`/dashboard${link.path}`} key={link.id}>
+					<div
+						className={`${classes.sidebarLink} ${
+							isLinkActive(link.path) ? "active" : ""
+						}`}>
+						{link.icon}
+						<h5>{link.label}</h5>
+					</div>
+				</Link>
 			))}
 		</div>
 	);
