@@ -1,6 +1,7 @@
 .m-dashboard {
 	display: flex;
 }
+
 .m-sidebar-wrapper {
 	height: 100vh;
 	width: 110px;
