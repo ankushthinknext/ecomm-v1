@@ -9,6 +9,7 @@ import Categories from "../components/Categories";
 import Reports from "../components/Reports";
 import { Route } from "react-router-dom";
 import "./dashboard.css";
+import UserForm from "../components/UserForm";
 
 export default function Dashboard() {
 	return (
@@ -19,7 +20,8 @@ export default function Dashboard() {
 			<div className="m-main-wrapper">
 				<Navbar />
 				<Route path="/dashboard/main" component={Main} />
-				<Route path="/dashboard/users" component={Users} />
+				<Route path="/dashboard/users" exact component={Users} />
+				<Route path="/dashboard/users/new" exact component={UserForm} />
 				<Route path="/dashboard/products" component={Products} />
 				<Route path="/dashboard/categories" component={Categories} />
 				<Route path="/dashboard/transactions" component={Transactions} />
