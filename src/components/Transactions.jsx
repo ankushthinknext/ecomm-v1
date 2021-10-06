@@ -1,5 +1,5 @@
 import { Container, Grid, Paper } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
@@ -12,11 +12,14 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import Cart from "./Cart";
+import { CartContext } from "../App";
 
 function Transactions() {
 	const [allProducts, setAllProducts] = useState(null);
 	const [productsByCategory, setProductsByCategory] = useState(null);
-	const [value, setValue] = React.useState("1");
+	const [value, setValue] = React.useState(0);
+	const { addToCart } = useContext(CartContext);
 
 	useEffect(() => {
 		axios("product/transaction").then((response) => {
@@ -49,7 +52,9 @@ function Transactions() {
 								<TabPanel value="0">
 									<Grid container justifyContent="space-evenly">
 										{allProducts?.map((product) => (
-											<Card sx={{ width: "30%" }}>
+											<Card
+												onClick={() => addToCart(product)}
+												sx={{ width: "30%" }}>
 												<CardMedia
 													component="img"
 													height="140"
@@ -75,7 +80,9 @@ function Transactions() {
 									<TabPanel value={index + 1}>
 										<Grid container justifyContent="space-evenly">
 											{category.items?.map((product) => (
-												<Card sx={{ width: "30%" }}>
+												<Card
+													onClick={() => addToCart(product)}
+													sx={{ width: "30%" }}>
 													<CardMedia
 														component="img"
 														height="140"
@@ -106,7 +113,9 @@ function Transactions() {
 					</Paper>
 				</Grid>
 				<Grid items xs={12} lg={4}>
-					<Paper>cart</Paper>
+					<Paper>
+						<Cart />
+					</Paper>
 				</Grid>
 			</Grid>
 		</Container>
