@@ -107,7 +107,7 @@ function Main() {
 							}}
 							className={classes.mPanel}>
 							<Typography variant="h5" gutterBottom>
-								Income - {dashboardData?.total}
+								Income - {dashboardData?.total.toFixed(2)}
 							</Typography>
 						</Paper>
 					</Grid>
@@ -145,9 +145,13 @@ function Main() {
 										{recentTransaction.map((transaction) => (
 											<TableRow>
 												<TableCell>{transaction._id}</TableCell>
-												<TableCell>{transaction.createdAt}</TableCell>
+												<TableCell>
+													{moment(transaction.createdAt).format("llll")}
+												</TableCell>
 												<TableCell>{transaction.items.length}</TableCell>
-												<TableCell>{transaction.grandtotal}</TableCell>
+												<TableCell>
+													{transaction.grandtotal.toFixed(2)}
+												</TableCell>
 											</TableRow>
 										))}
 									</TableBody>

@@ -22,6 +22,7 @@ export default function Dashboard() {
 				<Route path="/dashboard/main" component={Main} />
 				<Route path="/dashboard/users" exact component={Users} />
 				<Route path="/dashboard/users/new" exact component={UserForm} />
+				<Route path="/dashboard/users/update/:id?" exact component={UserForm} />
 				<Route path="/dashboard/products" component={Products} />
 				<Route path="/dashboard/categories" component={Categories} />
 				<Route path="/dashboard/transactions" component={Transactions} />

@@ -17,7 +17,7 @@ import Receipt from "./Receipt";
 
 function Cart() {
 	const [storeSettings, setStoreSettings] = useState(null);
-	const [open, setOpen] = React.useState(true);
+	const [open, setOpen] = React.useState(false);
 	const [transactionData, setTransactionData] = useState(null);
 
 	const handleClickOpen = () => {

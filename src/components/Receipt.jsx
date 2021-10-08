@@ -26,6 +26,7 @@ export default function Receipt({
 	return (
 		<div>
 			<Dialog
+				style={{ padding: "20px" }}
 				open={receiptModal}
 				onClose={onClose}
 				aria-labelledby="alert-dialog-title"
@@ -61,11 +62,9 @@ export default function Receipt({
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{receiptData.items.map((item) => (
-									<TableRow key={item._id}>
-										<TableCell>
-											{item.name} {item.price}
-										</TableCell>
+								{receiptData?.products.map((item) => (
+									<TableRow key={item?._id}>
+										<TableCell>{item?.name}</TableCell>
 										<TableCell align="center">{item.qty}</TableCell>
 										<TableCell align="center">{item.price}</TableCell>
 										<TableCell>{(item.qty * item.price).toFixed(2)}</TableCell>
@@ -73,12 +72,35 @@ export default function Receipt({
 								))}
 							</TableBody>
 						</Table>
+						<Table>
+							<TableRow>
+								<TableCell align="right">Subtotal</TableCell>
+								<TableCell align="right">
+									{receiptData?.subtotal.toFixed(2)}
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell align="right">Discount</TableCell>
+								<TableCell align="right">
+									{receiptData?.discount.toFixed(2)}
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell align="right">Grand Total</TableCell>
+								<TableCell align="right">
+									{receiptData?.grandtotal.toFixed(2)}
+								</TableCell>
+							</TableRow>
+						</Table>
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={onClose}>Disagree</Button>
-					<Button onClick={onClose} autoFocus>
-						Agree
+					<Button
+						fullWidth
+						color="primary"
+						className="m-btn"
+						variant="contained">
+						Print
 					</Button>
 				</DialogActions>
 			</Dialog>

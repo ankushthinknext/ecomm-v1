@@ -89,9 +89,12 @@ function Users() {
 																{moment(user.lastActive).format("llll")}
 															</TableCell>
 															<TableCell>
-																<Button>
-																	<ModeEditIcon />
-																</Button>
+																<Link
+																	to={`/dashboard/users/update/${user._id}`}>
+																	<Button>
+																		<ModeEditIcon />
+																	</Button>
+																</Link>
 																<Button>
 																	<DeleteIcon
 																		onClick={() => handleDelete(user._id)}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -15,19 +15,32 @@ import Container from "@mui/material/Container";
 import { FormControl, InputLabel, NativeSelect } from "@mui/material";
 import axios from "../config/axiosConfig";
 import Joi from "joi-browser";
+import Swal from "sweetalert2";
 
-const UserForm = ({ history }) => {
+const UserForm = ({ history, match }) => {
 	const [formData, setFormData] = useState({});
 	const [errors, setErrors] = useState(null);
+	const [mode, setMode] = useState("CREATE");
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
-	console.log(errors);
+	useEffect(() => {
+		let userId = match.params.id;
+		axios(`user/${userId}`).then((response) => {
+			if (response.status == 200) {
+				setFormData(response.data.data);
+				setMode("UPDATA");
+			}
+		});
+	}, []);
 
 	const formSchema = {
 		username: Joi.string().min(7).max(30).required().label("User Name"),
 		fullname: Joi.string().min(3).max(30).required().label("Full Name"),
-		password: Joi.string().min(7).max(30).required().label("Password"),
+		password:
+			mode === "CREATE"
+				? Joi.string().min(7).max(30).required().label("Password")
+				: Joi.string().min(7).max(30).label("Password"),
 		role: Joi.string().min(3).max(30).required(),
 		email: Joi.string().email().min(7).max(30).required().label("Email"),
 	};
@@ -39,7 +52,25 @@ const UserForm = ({ history }) => {
 			setErrors(result.error.details);
 		} else {
 			setErrors(null);
-			axios.post("user", formData);
+			if (mode === "CREATE") {
+				axios.post("user", formData).then((res) => {
+					if (res.status === 200) {
+						Swal.fire("Create!", "User created!", "success");
+						history.push("/dashboard/users");
+					} else {
+						Swal.fire("Opps!", "Something went wrong...", "error");
+					}
+				});
+			} else {
+				axios.put(`user/${match.params.id}`, formData).then((res) => {
+					if (res.status === 200) {
+						Swal.fire("Update!", "User updated!", "success");
+						history.push("/dashboard/users");
+					} else {
+						Swal.fire("Opps!", "Something went wrong...", "error");
+					}
+				});
+			}
 		}
 
 		//api call
@@ -74,6 +105,10 @@ const UserForm = ({ history }) => {
 											id="firstName"
 											label="Full Name"
 											autoFocus
+											InputLabelProps={{
+												shrink: formData ? true : false,
+											}}
+											value={formData?.fullname}
 											error={
 												errors &&
 												errors.find((er) => er.context.key === "fullname")
@@ -93,6 +128,10 @@ const UserForm = ({ history }) => {
 											label="User Name"
 											name="username"
 											autoComplete="lname"
+											value={formData?.username}
+											InputLabelProps={{
+												shrink: formData ? true : false,
+											}}
 											error={
 												errors &&
 												errors.find((er) => er.context.key === "username")
@@ -113,6 +152,10 @@ const UserForm = ({ history }) => {
 											fullWidth
 											label="Email Address"
 											autoFocus
+											value={formData?.email}
+											InputLabelProps={{
+												shrink: formData ? true : false,
+											}}
 											error={
 												errors &&
 												errors.find((er) => er.context.key === "email")
@@ -132,11 +175,15 @@ const UserForm = ({ history }) => {
 											label="Password"
 											type="password"
 											name="password"
-											autoComplete="Pa"
+											autoComplete={false}
+											InputLabelProps={{
+												shrink: formData ? true : false,
+											}}
 											error={
 												errors &&
 												errors.find((er) => er.context.key === "password")
 											}
+											value={formData?.password}
 											helperText={
 												errors &&
 												errors.map(
@@ -147,16 +194,37 @@ const UserForm = ({ history }) => {
 										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
-										<FormControl fullWidth variant="outlined">
-											<InputLabel htmlFor="uncontrolled-native">Age</InputLabel>
+										<FormControl
+											fullWidth
+											variant="outlined"
+											formHelperText={
+												errors &&
+												errors.map(
+													(err) => err.context.key === "role" && err.message,
+												)
+											}>
+											<InputLabel htmlFor="uncontrolled-native">
+												Role
+											</InputLabel>
 											<NativeSelect
-												defaultValue={30}
 												inputProps={{
 													name: "role",
 													id: "uncontrolled-native",
 												}}>
-												<option value="Admin">Admin</option>
-												<option value="Cashier">Cashier</option>
+												<option
+													selected={
+														mode == "CREATE" &&
+														formData &&
+														formData.role === "Admin"
+													}
+													value="Admin">
+													Admin
+												</option>
+												<option
+													selected={formData && formData.role === "Cashier"}
+													value="Cashier">
+													Cashier
+												</option>
 											</NativeSelect>
 										</FormControl>
 									</Grid>
@@ -170,7 +238,7 @@ const UserForm = ({ history }) => {
 											fullWidth
 											variant="contained"
 											sx={{ mt: 3, mb: 2 }}>
-											Submit
+											{mode === "CREATE" ? "SUBMIT" : "UPDATE"}
 										</Button>
 									</Grid>
 								</Grid>
